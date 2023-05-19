@@ -1,27 +1,27 @@
 pipeline {
   agent any
     
-  tools {nodejs "node"}
+  tools {
+    nodejs "node"
+  }
     
   stages {
-        
     stage('Git') {
       steps {
-        git 'https://github.com/****/****'
+        git 'https://github.com/rtk18/jenkins-pipeline'
       }
     }
      
     stage('Build') {
       steps {
         sh 'npm install'
-         sh '<<Build Command>>'
+        sh 'npm run build'
       }
     }  
     
-            
     stage('Test') {
       steps {
-        sh 'node test'
+        sh 'npm test'
       }
     }
   }
