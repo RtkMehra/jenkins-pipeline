@@ -1,23 +1,19 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
+import { MongooseModule } from '@nestjs/mongoose';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { TypeOrmModule } from '@nestjs/typeorm';
+import { NoteModule } from './note/note.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forRoot({
-      type: 'postgres',
-      host: 'dpg-cpjkbeo21fec739vctt0-a',
-      port: 5432,
-      password: 'B5qsBOB8JqP6l6YOeUo3lp5QG7cUj6qS',
-      username: 'hardik_note_project_user',
-      entities: [],
-      database: 'hardik_note_project',
-      synchronize: true,
-      logging: true,
+    ConfigModule.forRoot({
+      isGlobal: true,
     }),
-    // UserModule,
-  ],  controllers: [AppController],
+    MongooseModule.forRoot(process.env.MONGO_URI),
+    NoteModule,
+  ],
+  controllers: [AppController],
   providers: [AppService],
 })
 export class AppModule {}
