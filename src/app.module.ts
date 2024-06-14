@@ -10,7 +10,7 @@ import { NoteModule } from './note/note.module';
     ConfigModule.forRoot({
       isGlobal: true,
     }),
-    MongooseModule.forRoot(process.env.MONGO_URI),
+    MongooseModule.forRoot("mongodb+srv://RenderUser :G1uo7yEX15FYgUEx@note.vpq8dde.mongodb.net/?retryWrites=true&w=majority&appName=Note"),
     NoteModule,
   ],
   controllers: [AppController],
