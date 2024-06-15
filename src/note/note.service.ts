@@ -18,13 +18,17 @@ export class NoteService {
     }
   }
 
-  async findAll(): Promise<Note[]> {
-    try {
-      return await this.noteModel.find().sort({ pinned: -1, createdAt: -1 }).exec();
-    } catch (error) {
-      // Handle database errors
-      throw new Error(`Failed to find notes: ${error.message}`);
-    }
+  async findAll({ page, limit }: { page: number; limit: number }): Promise<{ data: Note[]; total: number; page: number; limit: number }> {
+    const skip = (page - 1) * limit;
+    const data = await this.noteModel.find().skip(skip).limit(limit).exec();
+    const total = await this.noteModel.countDocuments().exec();
+
+    return {
+      data,
+      total,
+      page,
+      limit,
+    };
   }
 
   async findOne(id: string): Promise<Note> {

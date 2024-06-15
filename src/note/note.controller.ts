@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, Delete, Put, Patch } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, Put, Patch, Query } from '@nestjs/common';
 import { NoteService } from './note.service';
 import { CreateNoteDto } from './dto/create-note.dto';
 import { Note } from './entities/note.entity';
@@ -11,10 +11,13 @@ export class NoteController {
   async create(@Body() createNoteDto: CreateNoteDto): Promise<Note> {
     return this.noteService.create(createNoteDto);
   }
-
+  
   @Get()
-  async findAll(): Promise<Note[]> {
-    return this.noteService.findAll();
+  async findAll(
+    @Query('page') page: number = 1,
+    @Query('limit') limit: number = 10
+  ): Promise<{ data: Note[]; total: number; page: number; limit: number }> {
+    return this.noteService.findAll({ page, limit });
   }
 
   @Get(':id')
