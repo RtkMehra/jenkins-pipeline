@@ -4,7 +4,10 @@ import { Logger } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  
+
+  // Enable CORS
+  app.enableCors();
+
   // Create a logger instance
   const logger = new Logger('Bootstrap');
   
