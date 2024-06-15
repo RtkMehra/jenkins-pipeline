@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { CreateNoteDto } from './dto/create-note.dto';
@@ -13,22 +13,25 @@ export class NoteService {
       const createdNote = new this.noteModel(createNoteDto);
       return await createdNote.save();
     } catch (error) {
-      // Handle database or validation errors
-      throw new Error(`Failed to create note: ${error.message}`);
+      throw new BadRequestException(`Failed to create note: ${error.message}`);
     }
   }
 
   async findAll({ page, limit }: { page: number; limit: number }): Promise<{ data: Note[]; total: number; page: number; limit: number }> {
-    const skip = (page - 1) * limit;
-    const data = await this.noteModel.find().skip(skip).limit(limit).exec();
-    const total = await this.noteModel.countDocuments().exec();
+    try {
+      const skip = (page - 1) * limit;
+      const data = await this.noteModel.find().skip(skip).limit(limit).exec();
+      const total = await this.noteModel.countDocuments().exec();
 
-    return {
-      data,
-      total,
-      page,
-      limit,
-    };
+      return {
+        data,
+        total,
+        page,
+        limit,
+      };
+    } catch (error) {
+      throw new BadRequestException(`Failed to fetch notes: ${error.message}`);
+    }
   }
 
   async findOne(id: string): Promise<Note> {
@@ -39,21 +42,19 @@ export class NoteService {
       }
       return note;
     } catch (error) {
-      // Handle database or not found errors
-      throw new Error(`Failed to find note: ${error.message}`);
+      throw new NotFoundException(`Note not found: ${error.message}`);
     }
   }
 
   async delete(id: string): Promise<any> {
     try {
-      // const deletedNote = await this.noteModel.findByIdAndRemove(id).exec();
-      // if (!deletedNote) {
-      //   throw new NotFoundException(`Note with ID ${id} not found`);
-      // }
-      return "done";
+      const deletedNote = await this.noteModel.findOneAndDelete({ _id: id }).exec();
+      if (!deletedNote) {
+        throw new NotFoundException(`Note with ID ${id} not found`);
+      }
+      return deletedNote;
     } catch (error) {
-      // Handle database or not found errors
-      throw new Error(`Failed to delete note: ${error.message}`);
+      throw new NotFoundException(`Failed to delete note: ${error.message}`);
     }
   }
 
@@ -65,8 +66,7 @@ export class NoteService {
       }
       return updatedNote;
     } catch (error) {
-      // Handle database or not found errors
-      throw new Error(`Failed to update note: ${error.message}`);
+      throw new NotFoundException(`Failed to update note: ${error.message}`);
     }
   }
 
@@ -78,8 +78,7 @@ export class NoteService {
       }
       return updatedNote;
     } catch (error) {
-      // Handle database or not found errors
-      throw new Error(`Failed to pin note: ${error.message}`);
+      throw new NotFoundException(`Failed to pin note: ${error.message}`);
     }
   }
 }
