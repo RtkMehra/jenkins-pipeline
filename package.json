@@ -31,7 +31,7 @@
     "mongoose": "^8.4.1",
     "nest": "^0.1.6",
     "pg": "^8.12.0",
-    "reflect-metadata": "^0.1.13",
+    "reflect-metadata": "^0.2.2",
     "rxjs": "^7.2.0"
   },
   "devDependencies": {
